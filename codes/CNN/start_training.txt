@@ -1,0 +1,24 @@
+python train.py --gpuID 0 --epochs 100 --batch_size 1 --num_stack 2 --model_path ../../trained_models/nyu_0
+
+python train.py --gpuID 0 --epochs 200 --batch_size 32 --num_stack 2 --model_path ../../trained_models/nyu_32im_11hm_256ch_one
+
+python train.py --gpuID 0 --epochs 200 --batch_size 32 --num_stack 2 --model_path ../../trained_models/nyu_32im_11hm_256ch_fingertips --resume True --resume_model_json ../../trained_models/nyu_32im_11hm_256ch_fingertips/net_arch.json --resume_model ../../trained_models/nyu_32im_11hm_256ch_fingertips/weights_epoch92.h5 --init_epoch 0
+
+python train.py --gpuID 0 --epochs 200 --batch_size 32 --num_stack 2 --model_path ../../trained_models/nyu_32im_11hm_256ch_all --resume True --resume_model_json ../../trained_models/nyu_32im_11hm_256ch_all/net_arch.json --resume_model ../../trained_models/nyu_32im_11hm_256ch_all/weights_epoch122.h5 --init_epoch 0
+
+python eval_epoch.py --resume_model_json '../../trained_models/nyu/net_arch.json' --resume_model '../../trained_models/nyu/weights_epoch0.h5'
+python eval_epoch.py --resume_model_json '../../trained_models/all/net_arch.json' --resume_model '../../trained_models/all/weights_epoch56.h5'
+
+#training approach
+128 chanels - train all heatmaps with loss for 0th joint
+>>> python3 train.py --gpuID 0 --epochs 1000 --batch_size 16 --num_stack 2 --model_path ../../trained_models/one
+
+128 chanels - resume train from prevouse 39 epoch with loss for fingertips [0:9:2]
+>>> python3 train.py --gpuID 0 --epochs 200 --batch_size 32 --num_stack 2 --model_path ../../trained_models/fingertips --resume True --resume_model_json ../../trained_models/fingertips/net_arch.json --resume_model ../../trained_models/fingertips/weights_epoch039.h5 --init_epoch 0
+
+128 chanels - resume train from prevouse 8 epoch with loss for all heatmaps
+!!! change computing loss in hourglass.py !!!
+>>> python3 train.py --gpuID 0 --epochs 200 --batch_size 32 --num_stack 2 --model_path ../../trained_models/all --resume True --resume_model_json ../../trained_models/all/net_arch.json --resume_model ../../trained_models/all/weights_epoch08.h5 --init_epoch 0
+
+128 chanels -resume train from prevouse 14 with loss for all heatmaps
+python3 train.py --gpuID 0 --epochs 1000 --batch_size 32 --num_stack 2 --model_path ../../trained_models/my_all --resume True --resume_model_json ../../trained_models/my_all/net_arch.json --resume_model ../../trained_models/my_all/weights_epoch014.h5 --init_epoch 0

@@ -46,16 +46,16 @@ HandPoseEstimation [[Project]](https://github.com/bordac6/hand3d)
 
 #### September 30, 2019	October 6, 2019
 - Navrh postupu pri praci.
-1. spracovanie vystupu z kameri Intel Real Sense d350i
-2. vytvorit trenovaciu mnozinu pomocou existujucej CNN na najdenie ruky z kameri v 1. bode (RGB + depth_map)
+1. spracovanie vystupu z kamery Intel Real Sense d350i
+2. vytvorit trenovaciu mnozinu pomocou existujucej CNN na najdenie ruky z kamery v 1. bode (RGB + depth_map)
 3. vytvorit vlastnu CNN a pomocou spracovanych dat z bodu 2. natrenovat na 2D obrazkoch
 
 #### October 7, 2019	October 13, 2019
 - Zbieranie informacii o novej kamere, ktora bude pouzita pri praci.
-- Existujuce [projekty](https://github.com/IntelRealSense/hand_tracking_samples) na najdenie ruky pouzitim kameri Intel Real Sense
+- Existujuce [projekty](https://github.com/IntelRealSense/hand_tracking_samples) na najdenie ruky pouzitim kamery Intel Real Sense
 
 #### October 14, 2019	October 20, 2019
-- Ulozenie videa z kameri Intel RealSense D435i
+- Ulozenie videa z kamery Intel RealSense D435i
 - Prestudovanie hand_tracking_samples projektu, kompilovanie a spustenie
 
 #### October 21, 2019	October 27, 2019

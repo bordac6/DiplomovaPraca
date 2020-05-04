@@ -10,7 +10,7 @@ Spoľahlivá  detekcia  3D  pózy  ruky  je  dôležitým  predpokladom  pre  mn
 
 ### Prezentácia
 
-Prezentácia práce [[PDF]](https://github.com/bordac6/DiplomovaPraca/blob/master/Presentation/Detekcia%203D%20p%C3%B3zy%20ruky%20zo%20stereoskopick%C3%A9ho%20z%C3%A1znamu.pdf)
+Prezentácia práce [[PDF]](https://github.com/bordac6/DiplomovaPraca/blob/master/Presentation/HandPoseEstimation.pdf)
 
 ### Dokumentácia
 
@@ -18,7 +18,7 @@ Dokumentácia práce [[PDF]](https://github.com/bordac6/DiplomovaPraca/blob/mast
 
 ### Zdrojový kód
 
-HandPoseEstimation [[Project]](https://github.com/bordac6/hand3d)
+Predikcia súradníc kĺbov ruky [[Project]](https://github.com/bordac6/DiplomovaPraca/tree/master/codes)
 
 ![im0](results/im0.png)
 ![im1](results/im1.png)

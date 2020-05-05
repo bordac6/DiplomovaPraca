@@ -1,1 +1,8 @@
 \chapter*{Úvod}\label{chap:intro}
+Úloha vytvorenia systému, ktorý by umožnil robotovi ľudského učiteľa pre pohyb ruky môže byť prínosná pre mnoho oblastí. Jej úspešné zavedenie by mohlo zjednodušiť prácu pri programovaní pohybu robotických rúk, či vytvoriť ľudského robota s dôveryhodným pohybom. 
+
+Táto práca sa bude zaoberať prehľadom existujúcich riešení na určovanie pozície ruky, výberom najvhodnejšej metódy pre aplikačnú oblasť ľudského učiteľa pre robota a implementáciou takého systému. V práci ukážeme tri prístupy k riešeniu tohoto problému. Porovnáme ich výhody, nevýhody a využitie v oblasti ľudského učiteľa.
+
+Ďalej vytvoríme systém, ktorý bude schopný v krátkom čase predikovať súradnice v troch rozmeroch. Taktiež berieme do úvahy nízku náročnosť na hardvér pre predikovanie súradníc. Preto náš systém bude predikovať 2D súradnice z RGB obrázkov. S použitím kamery Intel RealSense d435i vieme získať na základe súradníc v RGB obrázku hĺbkovú informáciu pre daný bod. Týmto doplníme našu predikciu o vzdialenosť kamery ku kĺbom na ruke.
+
+Na záver vyhodnotíme náš systém vo všeobecnosti presnosťou predikovaných kĺbov, aj ako riešenie pre náš problém. Ukážeme obrázky s predikovanými súradnicami a vyhodnotíme predikciu v kontexte ľudského pohľadu na obrázok.

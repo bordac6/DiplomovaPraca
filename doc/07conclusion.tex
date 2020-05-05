@@ -1,1 +1,9 @@
 \chapter*{Záver}\label{chap:conclusion}
+
+V práci sme uviedli tri rôzne prístupy na riešenie problému určovania pozície ruky. Porovnali sme tieto metódy ako vo všeobecnosť, tak aj pre oblasť nášho problému ľudského učiteľa pre robota. Zo získaných poznatkov sme vybrali najvhodnejší prístup pre riešenie tohoto problému, ktorým bolo použitie konvolučných neurónových sietí a architektúry Hourglass.
+
+Vytvorili sme systém na predikciu kĺbov ruky s použitím konvolučných neurónových sietí pre RGB obrázky. Sieť bola učená na datasete NYUHands. Náš systém predikoval tepelné mapy, v ktorých maximálna hodnota je dosahovaná v súradniciach kĺbu. Súradniciam v obrázku sú pridelené aj hĺbkové dáta zo stereoskopického záznamu vďaka kamere Intel RealSense d435i, ktorými sme doplnili predikciu našich súradníc o tretí rozmer.
+
+Pre zlepšenie predikcie súradníc v našom prostredí robota, sme vytvorili vlastný dataset so snímkov kamery umiestnenej pri robotovi. Neurónovú sieť sme dotrénovali na našich obrázkoch.
+
+Vyhodnotili sme náš systém metrikou presnosti predikcie kĺbov a aj ľudským zhodnotením v kontexte vstupného obrázka na predikciu kĺbov. Načrtli sme možnosti a obmedzenia nášho riešenia. Taktiež sme navrhli možné riešenie uvedených obmedzení rozšírením nášho systému.

@@ -91,9 +91,13 @@ def run_eval(model_json, model_weights, epoch, dataset_path):
         cv2.line(plot_image, start_point, end_point, color, thickness)
         cv2.line(color_image_BGR, start_point, end_point, color, thickness)
 
-      ax.view_init(70, 90)
+      ax.view_init(180, 90)
       ax.set_xlim(ax.get_xlim()[::-1])        # invert the axis
       ax.set_zlim(ax.get_zlim()[::-1])        # invert the axis
+
+      ax.set_xlabel("x [px]")
+      ax.set_ylabel("y [px]")
+      ax.set_zlabel("z [m]")
 
       plt.subplot(1,2,1)
       plt.imshow(plot_image/255)
@@ -115,5 +119,5 @@ def run_eval(model_json, model_weights, epoch, dataset_path):
 if __name__ == "__main__":
   pth = 'C:\\Users\\TBordac\\Documents\\Workspace\\git\\PNNPPV_project\\trained_models\\my_final\\'
   # dataset_path = "test_bag\\viktor2r.bag"
-  dataset_path = "test_bag\\viktor4l.bag"
+  dataset_path = "C:\\Users\\TBordac\\Documents\\Workspace\\FMFI\\DiplomovaPracaBackup\\codes\\rosbag_reader\\test_bag\\rebecca2r.bag"
   run_eval(pth+"net_arch.json", pth+"weights_epoch{}.h5".format(219), 219, dataset_path)

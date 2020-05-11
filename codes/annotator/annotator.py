@@ -9,7 +9,8 @@ from scipy.io import savemat, loadmat
 
 my = 0
 # path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\igor4r.bag"
-path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\igor2r.bag"
+train = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\igor2r.bag"
+path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\FMFI\\DiplomovaPracaBackup\\codes\\rosbag_reader\\test_bag\\igor2l.bag"
 # path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\viktor2l.bag"
 # path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\viktor4r.bag"
 # path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\rebecca2l.bag"
@@ -32,8 +33,8 @@ jnt = []
 batch = []
 annot = []
 
-if path.exists('joint_data.mat'):
-    annot_data = loadmat('joint_data.mat')
+if path.exists('test_joint_data.mat'):
+    annot_data = loadmat('test_joint_data.mat')
     data = annot_data['joint_uvd']
     if data.shape[0] == 1 and data.shape[1] > 0:
         for i in range(data.shape[1]):
@@ -101,14 +102,19 @@ for i in range(0, video.shape[0], 5):
     # if pressed escape exit program
     if key == 27:
         annot = [np.array(batch)]
-        savemat('joint_data.mat', {'joint_uvd': np.array(annot)})
+        savemat('test_joint_data.mat', {'joint_uvd': np.array(annot)})
         cv2.destroyAllWindows()
         break
     elif key == ord('q'):
         cv2.destroyAllWindows()
         break
     elif key == ord('a'):
-        batch.append(np.array(jnt))
+        verify_batch = batch[:]
+        verify_batch.append(np.array(jnt))
+        if len(np.array(verify_batch).shape) == 3:
+            batch.append(np.array(jnt))
+        else:
+            print('Couldn`t add new annotations. Shape cann`t be {}'.format(np.array(verify_batch).shape))
         im = Image.fromarray(image)
-        im.save("train/rgb_1_"+ str(len(batch)).zfill(7) +'.jpg')
+        im.save("test/rgb_1_"+ str(len(batch)).zfill(7) +'.jpg')
         jnt = []

@@ -28,7 +28,10 @@ class DataGen(object):
     config.enable_stream(rs.stream.color, 640, 480, rs.format.rgb8, self.frame_rate)
 
     # Start streaming from file
-    pipeline.start(config)
+    pipe_profile = pipeline.start(config)
+    depth_sensor = pipe_profile.get_device().first_depth_sensor()
+    depth_scale = depth_sensor.get_depth_scale()
+
     while True:
       # Get frameset of depth
       frames = pipeline.wait_for_frames()
@@ -40,4 +43,4 @@ class DataGen(object):
       depth_frame = aligned_frames.get_depth_frame()
       color_frame = aligned_frames.get_color_frame()
 
-      yield depth_frame, color_frame
+      yield depth_frame, color_frame, depth_scale

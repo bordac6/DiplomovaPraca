@@ -7,14 +7,9 @@ from PIL import Image
 
 from scipy.io import savemat, loadmat
 
-my = 0
-# path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\igor4r.bag"
-train = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\igor2r.bag"
-path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\FMFI\\DiplomovaPracaBackup\\codes\\rosbag_reader\\test_bag\\igor2l.bag"
-# path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\viktor2l.bag"
-# path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\viktor4r.bag"
-# path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\rebecca2l.bag"
-path_my = "C:\\Users\\TBordac\\Documents\\20191205_141123.bag"
+train = "train.bag"
+pth = "intelRealsenseOutputI.bag" # recorded file from RS d435i 680x480
+fr = 15 # frame rate used while recording
 sample_idx = 0
 
 #annotatinos
@@ -33,6 +28,7 @@ jnt = []
 batch = []
 annot = []
 
+#load annotated date
 if path.exists('test_joint_data.mat'):
     annot_data = loadmat('test_joint_data.mat')
     data = annot_data['joint_uvd']
@@ -42,8 +38,6 @@ if path.exists('test_joint_data.mat'):
         # annot = annot_data['joint_uvd']
 print(np.array(batch).shape)
 
-pth = path_my if my == 1 else path_ext
-fr = 30 if my == 1 else 15
 pipeline = rs.pipeline()
 # Create a config object
 config = rs.config()
@@ -87,7 +81,6 @@ while True:
 cv2.namedWindow("Color Stream", cv2.WINDOW_AUTOSIZE)
 cv2.setMouseCallback("Color Stream",draw_circle)
 for i in range(0, video.shape[0], 5):
-
     image = np.asanyarray(video[i]).astype('uint8')
     #switch RGB to BGR for cv2
     color_image_BGR = np.zeros_like(image)
@@ -113,8 +106,8 @@ for i in range(0, video.shape[0], 5):
         verify_batch.append(np.array(jnt))
         if len(np.array(verify_batch).shape) == 3:
             batch.append(np.array(jnt))
+            im = Image.fromarray(image)
+            im.save("test/rgb_1_"+ str(len(batch)).zfill(7) +'.jpg')
         else:
             print('Couldn`t add new annotations. Shape cann`t be {}'.format(np.array(verify_batch).shape))
-        im = Image.fromarray(image)
-        im.save("test/rgb_1_"+ str(len(batch)).zfill(7) +'.jpg')
-        jnt = []
+    jnt = []

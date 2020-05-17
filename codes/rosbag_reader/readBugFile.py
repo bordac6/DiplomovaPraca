@@ -6,11 +6,8 @@ from os import path
 from PIL import Image
 
 my = 0
-path_ext = "C:\\Users\\TBordac\\Documents\\Workspace\\git\\rosbag_reader\\igor2r.bag"
-path_my = "C:\\Users\\TBordac\\Documents\\20191205_141123.bag"
-
-pth = path_my if my == 1 else path_ext
-fr = 30 if my == 1 else 15
+pth = "train.bag" # recorded file from RS d435i 680x480
+fr = 15 # frame rate used while recording
 
 # print(path.exists(path_ext))
 

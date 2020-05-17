@@ -5,6 +5,8 @@ import cv2
 import os
 import glob
 
+from scipy.io import savemat, loadmat
+
 sys.path.insert(0, "../data_gen/")
 sys.path.insert(0, "../tools/")
 
@@ -16,50 +18,61 @@ from keras.optimizers import Adam, RMSprop
 from keras.losses import mean_squared_error
 
 def cal_kp_distance(pre_kp, gt_kp, norm, threshold):
-    if gt_kp[0] > 1 and gt_kp[1] > 1:
-        dif = np.linalg.norm(gt_kp[0:2] - pre_kp[0:2]) / norm
-        if dif < threshold:
-            # good prediction
-            return 1, dif
-        elif dif < threshold + 0.3:
-            return 2, dif
-        else:  # failed
-            return 0, dif
-    else:
-        print('WRONG')
-        print(gt_kp)
-        return -1, 255
+    # if gt_kp[0] > 1 and gt_kp[1] > 1:
+    if False: #res in px
+        dif = np.linalg.norm(gt_kp[0:2] - pre_kp[0:2]) * 4
+    else: #res in mm
+        dif = np.linalg.norm(gt_kp - pre_kp)
 
-def heatmap_accuracy(predhmap, meta, norm, threshold):
-    pred_kps = post_process_heatmap(predhmap)
-    pred_kps = np.array(pred_kps)
+    if dif < threshold:
+        # good prediction
+        return 1, dif
+    elif dif < threshold + 0.3:
+        return 2, dif
+    else:  # failed
+        return 0, dif
+    # else:
+    #     print('WRONG')
+    #     print(gt_kp)
+    #     return -1, 255
 
+def heatmap_accuracy(predhmap, meta, norm, threshold, joints_acc, joints_dist):
     gt_kps = meta['tpts']
     scale = meta['scale']
+    index = meta['sample_index']
+
+    pred_kps = post_process_heatmap(predhmap)
+    pred_kps = np.array(pred_kps) * scale
+
+    depth_image = loadmat('C:\\Users\\TBordac\\Documents\\Workspace\\FMFI\\DiplomovaPraca\\codes\\annotator\\test\\depth_1_'+ str(index+1).zfill(7) +'.mat')['1']
 
     good_pred_count = 0
     failed_pred_count = 0
     almost_pred_count = 0
     arr_dif = []
     for i in range(gt_kps.shape[0]):
-        dis, dif = cal_kp_distance(pred_kps[i, :], gt_kps[i, :] / scale, norm, threshold)
+        gt_kps[i, 2] = depth_image[int(gt_kps[i, 1]), int(gt_kps[i, 0])]
+        pred_kps[i, 2] = depth_image[int(pred_kps[i, 1]), int(pred_kps[i, 0])]
+        dis, dif = cal_kp_distance(pred_kps[i, :], gt_kps[i, :], norm, threshold)
         if dis == 0:
             failed_pred_count += 1
         elif dis == 1:
             good_pred_count += 1
+            joints_acc[i] += 1
         elif dis == 2:
             almost_pred_count += 1
-        if dif < 255:
-            arr_dif.append(dif)
+            joints_acc[i] += 1
+        arr_dif.append(dif)
+        joints_dist[i].append(dif)
 
     return good_pred_count, failed_pred_count, almost_pred_count, arr_dif
 
-def cal_heatmap_acc(prehmap, metainfo, threshold):
+def cal_heatmap_acc(prehmap, metainfo, threshold, joints_acc, joints_dist):
     sum_good, sum_fail, sum_almost = 0, 0, 0
     arr_mean, arr_med, arr_distances = [], [], []
     for i in range(prehmap.shape[0]):
         _prehmap = prehmap[i, :, :, :]
-        good, bad, almost, arr_dif = heatmap_accuracy(_prehmap, metainfo[i], norm=4.5, threshold=threshold) #norm fitted on gtmap
+        good, bad, almost, arr_dif = heatmap_accuracy(_prehmap, metainfo[i], norm=4.5, threshold=threshold, joints_acc=joints_acc, joints_dist=joints_dist) #norm fitted on gtmap
 
         sum_good += good
         sum_fail += bad
@@ -90,11 +103,13 @@ def run_eval(model_json, model_weights, epoch, show_outputs=False, acc_history=[
 
     total_suc, total_fail, total_suc_bigger, total_fail_bigger = 0, 0, 0, 0
     total_arr_mean, total_arr_med, arr_dists = [], [], []
-    threshold = 0.2
+    joints_acc = np.zeros(valdata.get_nparts())
+    joints_dist = [[] for i in range(11)]
+    threshold = 9.7
     n_stacked = 2
 
     count = 0
-    batch_size = 1
+    batch_size = 20
     for _img, _gthmap, _meta in valdata.generator(batch_size, n_stacked, sigma=3, is_shuffle=False, with_meta=True):
 
         count += batch_size
@@ -105,6 +120,7 @@ def run_eval(model_json, model_weights, epoch, show_outputs=False, acc_history=[
 
         if count+batch_size > valdata.get_dataset_size():
             for _ in range(1):
+                break
                 i = np.random.randint(batch_size)
                 kp = _meta[i]['tpts']
                 scale = _meta[i]['scale']
@@ -147,7 +163,7 @@ def run_eval(model_json, model_weights, epoch, show_outputs=False, acc_history=[
         #         layers += (out[k][0,:,:,i],)
         #     cv2.imshow('Predicted heatmap output[{}] HG'.format(k), np.hstack(layers))
         
-        suc, bad, between_thresholds, mean, med, dists = cal_heatmap_acc(out[-1], _meta, threshold)
+        suc, bad, between_thresholds, mean, med, dists = cal_heatmap_acc(out[-1], _meta, threshold, joints_acc, joints_dist)
 
         total_suc += suc
         total_fail += (bad + between_thresholds)
@@ -156,6 +172,7 @@ def run_eval(model_json, model_weights, epoch, show_outputs=False, acc_history=[
         total_arr_mean.append(mean)
         total_arr_med.append(med)
         arr_dists.append(dists)
+        joints_distances = np.array(joints_dist)
 
     acc = total_suc * 1.0 / (total_fail + total_suc)
     acc_2 = total_suc_bigger * 1.0 / (total_fail_bigger + total_suc_bigger)
@@ -165,7 +182,9 @@ def run_eval(model_json, model_weights, epoch, show_outputs=False, acc_history=[
     print('Eval Accuray [{}] '.format(threshold), acc, '@ Epoch ', epoch)
     print('Eval Accuray [{}] '.format(threshold+0.3), acc_2, '@ Epoch ', epoch)
     print('mean distance {}; median distance {}'.format(np.mean(total_arr_mean), np.median(total_arr_med)))
-    print('max distance {}; min distance {}'.format(np.max(arr_dists), np.min(arr_dists)))
+    print('Acc for separate HM: {}'.format(joints_acc / valdata.get_dataset_size()))
+    print('Dist mean for separate HM: {}'.format(np.mean(joints_distances, axis=1)))
+    print('Dist med for separate HM: {}'.format(np.median(joints_distances, axis=1)))
 
     # with open(os.path.join('./', 'val.txt'), 'a+') as xfile:
     #     xfile.write('Epoch ' + str(epoch) + ':' + str(acc) + ':' + 

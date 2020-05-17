@@ -53,6 +53,8 @@ class NYUHandDataGen(object):
         elif self.is_train:
             return _anno, annot_idx[:train_val_treshold]
         else:
+            if self.my:
+                return _anno, annot_idx[:] #FIXME just for test on whole dataset
             return _anno, annot_idx[train_val_treshold:]
     #         return _anno, np.array([34948, 41447, 6279, 15487, 16105, 12193,
     #    39944, 16401, 50508, 16298, 52362, 55999, 38257, 44611,  2843,
